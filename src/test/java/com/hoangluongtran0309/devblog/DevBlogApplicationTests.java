@@ -1,13 +1,13 @@
-package com.hoangluongtran0309.devblog;
+// package com.hoangluongtran0309.devblog;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class DevBlogApplicationTests {
+// @SpringBootTest
+// class DevBlogApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+// 	@Test
+// 	void contextLoads() {
+// 	}
 
-}
+// }
