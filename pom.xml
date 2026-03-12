@@ -33,6 +33,7 @@
         <frontend-maven-plugin.nodeVersion>v22.22.0</frontend-maven-plugin.nodeVersion>
         <frontend-maven-plugin.npmVersion>10.9.4</frontend-maven-plugin.npmVersion>
         <guava.version>33.5.0-jre</guava.version>
+        <testcontainers.version>2.0.3</testcontainers.version>
     </properties>
     <dependencies>
         <dependency>
@@ -69,6 +70,25 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-postgresql</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
