@@ -2,6 +2,8 @@ package com.hoangluongtran0309.devblog.admin;
 
 import java.util.Set;
 
+import org.springframework.util.Assert;
+
 import com.hoangluongtran0309.devblog.infrastructure.persistence.BaseEntity;
 
 import jakarta.persistence.CollectionTable;
@@ -61,5 +63,19 @@ public class User extends BaseEntity<UserId> {
 
     public Set<UserRole> getRoles() {
         return roles;
+    }
+
+    public static User createAdministrator(UserId id, UserName userName, Email email, String password) {
+        return new User(
+                id,
+                userName,
+                email,
+                password,
+                Set.of(UserRole.ADMIN));
+    }
+
+    public void changePassword(String newPassword) {
+        Assert.hasText(password, "Password cannot be blank");
+        this.password = newPassword;
     }
 }
