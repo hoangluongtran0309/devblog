@@ -175,6 +175,11 @@ jobs:
             -e DB_NAME=blogdb \
             -e DB_USER=postgres \
             -e DB_PASSWORD=secret \
+            -e ADMIN_FIRST_NAME=Luong \
+            -e ADMIN_LAST_NAME=Tran \
+            -e ADMIN_EMAIL=admin@test.com \
+            -e ADMIN_PASSWORD=12345678 \
+            -e REMEMBER_ME_KEY=test-secret-key \
             -p 10000:10000 \
             test-image:pr-${{ github.event.pull_request.number }}
 
