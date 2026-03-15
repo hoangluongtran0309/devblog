@@ -106,4 +106,65 @@ public class Project extends BaseEntity<ProjectId> {
     public Set<Tag> getTags() {
         return tags;
     }
+
+    public static Project createDraft(ProjectId id, ProjectName projectName, ProjectSummary projectSummary,
+            ProjectContent projectContent,
+            ImagePreview imagePreview, Slug projectSlug,
+            LocalDateTime publishedAt, Set<Tag> tags) {
+        return new Project(
+                id,
+                projectName,
+                projectSummary,
+                projectContent,
+                imagePreview,
+                projectSlug,
+                ContentStatus.DRAFT,
+                publishedAt,
+                tags);
+    }
+
+    public static Project createPublished(ProjectId id, ProjectName projectName, ProjectSummary projectSummary,
+            ProjectContent projectContent,
+            ImagePreview imagePreview, Slug projectSlug,
+            Set<Tag> tags) {
+        return new Project(
+                id,
+                projectName,
+                projectSummary,
+                projectContent,
+                imagePreview,
+                projectSlug,
+                ContentStatus.PUBLISHED,
+                LocalDateTime.now(),
+                tags);
+    }
+
+    public void update(ProjectName projectName, ProjectSummary projectSummary,
+            ProjectContent projectContent,
+            ImagePreview imagePreview, Slug projectSlug,
+            LocalDateTime publishedAt, Set<Tag> tags) {
+        if (!isDraft()) {
+            throw new IllegalStateException("Only draft projects can be updated");
+        }
+
+        this.projectName = projectName;
+        this.projectSummary = projectSummary;
+        this.imagePreview = imagePreview;
+        this.projectSlug = projectSlug;
+        this.publishedAt = publishedAt;
+        this.tags = tags;
+    }
+
+    public void publish(LocalDateTime publishedAt) {
+        if (!isDraft()) {
+            throw new IllegalStateException("Only draft projects can be published");
+        }
+
+        this.publishedAt = publishedAt;
+        this.contentStatus = ContentStatus.PUBLISHED;
+    }
+
+    private boolean isDraft() {
+        return contentStatus == ContentStatus.DRAFT;
+    }
 }
