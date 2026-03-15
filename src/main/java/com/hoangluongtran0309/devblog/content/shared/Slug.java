@@ -17,7 +17,7 @@ public class Slug {
 
     public Slug(String slug) {
         Assert.hasText(slug, "Slug cannot be blank");
-        Assert.isTrue(slug.contains("-"), "Slug should contain - symbol");
+        Assert.isTrue(slug.matches("^[a-z0-9]+(?:(?:-|_)+[a-z0-9]+)*$"), "Slug is an invalid");
         this.slug = slug;
     }
 
