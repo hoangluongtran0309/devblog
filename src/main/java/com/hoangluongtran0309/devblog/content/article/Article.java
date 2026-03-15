@@ -118,4 +118,66 @@ public class Article extends BaseEntity<ArticleId> {
     public Set<Tag> getTags() {
         return tags;
     }
+
+    public static Article createDraft(ArticleId id, ArticleTitle articleTitle, ArticleSummary articleSummary,
+            ArticleContent articleContent, ImagePreview imagePreview, Slug articleSlug,
+            LocalDateTime publishedAt, Category category, Set<Tag> tags) {
+        return new Article(
+                id,
+                articleTitle,
+                articleSummary,
+                articleContent,
+                imagePreview,
+                articleSlug,
+                ContentStatus.DRAFT,
+                publishedAt,
+                category,
+                tags);
+    }
+
+    public static Article createPublished(ArticleId id, ArticleTitle articleTitle, ArticleSummary articleSummary,
+            ArticleContent articleContent, ImagePreview imagePreview, Slug articleSlug,
+            Category category, Set<Tag> tags) {
+        return new Article(
+                id,
+                articleTitle,
+                articleSummary,
+                articleContent,
+                imagePreview,
+                articleSlug,
+                ContentStatus.PUBLISHED,
+                LocalDateTime.now(),
+                category,
+                tags);
+    }
+
+    public void update(ArticleTitle articleTitle, ArticleSummary articleSummary,
+            ArticleContent articleContent, ImagePreview imagePreview, Slug articleSlug,
+            LocalDateTime publishedAt, Category category, Set<Tag> tags) {
+        if (!isDraft()) {
+            throw new IllegalStateException("Only draft articles can be updated");
+        }
+
+        this.articleTitle = articleTitle;
+        this.articleSummary = articleSummary;
+        this.articleContent = articleContent;
+        this.imagePreview = imagePreview;
+        this.articleSlug = articleSlug;
+        this.publishedAt = publishedAt;
+        this.category = category;
+        this.tags = tags;
+    }
+
+    public void publish(LocalDateTime publishedAt) {
+        if (!isDraft()) {
+            throw new IllegalStateException("Only draft articles can be published");
+        }
+
+        this.publishedAt = publishedAt;
+        this.contentStatus = ContentStatus.PUBLISHED;
+    }
+
+    private boolean isDraft() {
+        return contentStatus == ContentStatus.DRAFT;
+    }
 }
