@@ -1,0 +1,55 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div
+      th:fragment="sidebar"
+      class="aside hidden lg:block self-stretch mt-12 lg:mt-0"
+    >
+      <div
+        class="contact mb-12 bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-300 rounded-xl p-10 shadow-md"
+      >
+        <h2
+          class="text-2xl font-bold text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 mb-12 text-center leading-snug"
+        >
+          Let's Talk
+        </h2>
+
+        <div class="wrapper">
+          <p
+            class="text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 mb-4"
+          >
+            Do you want to learn more about how I can help your company overcome
+            problems? Let us have a conversation.
+          </p>
+
+          <ul class="social-link flex justify-center items-center gap-2.5">
+            <li>
+              <a
+                href="#"
+                class="icon-box w-11 h-11 bg-light-action-secondary dark:bg-dark-action-secondary transition-colors duration-300 rounded-full flex justify-center items-center text-2xl text-[#5865f2] hover:bg-accent hover:text-white"
+              >
+                <ion-icon name="logo-discord"></ion-icon>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                class="icon-box w-11 h-11 bg-light-action-secondary dark:bg-dark-action-secondary transition-colors duration-300 rounded-full flex justify-center items-center text-2xl text-[#1ca0f1] hover:bg-accent hover:text-white"
+              >
+                <ion-icon name="logo-twitter"></ion-icon>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                class="icon-box w-11 h-11 bg-light-action-secondary dark:bg-dark-action-secondary transition-colors duration-300 rounded-full flex justify-center items-center text-2xl text-[#4267b2] hover:bg-accent hover:text-white"
+              >
+                <ion-icon name="logo-facebook"></ion-icon>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
