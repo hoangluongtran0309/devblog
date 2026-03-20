@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "devblog.admin.first-name",
+    "type": "java.lang.String",
+    "description": "A description for 'devblog.admin.first-name'"
+  },
+  {
+    "name": "devblog.admin.last-name",
+    "type": "java.lang.String",
+    "description": "A description for 'devblog.admin.last-name'"
+  },
+  {
+    "name": "devblog.admin.email",
+    "type": "java.lang.String",
+    "description": "A description for 'devblog.admin.email'"
+  },
+  {
+    "name": "devblog.admin.password",
+    "type": "java.lang.String",
+    "description": "A description for 'devblog.admin.password'"
+  },
+  {
+    "name": "devblog.remember-me-key",
+    "type": "java.lang.String",
+    "description": "A description for 'devblog.remember-me-key'"
+  }
+]}
