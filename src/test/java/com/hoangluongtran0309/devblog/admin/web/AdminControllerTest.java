@@ -5,12 +5,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import org.springframework.test.context.TestPropertySource;
@@ -23,10 +20,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import com.hoangluongtran0309.devblog.admin.UserService;
-import com.hoangluongtran0309.devblog.infrastructure.security.SecurityConfiguration;
+import com.hoangluongtran0309.devblog.infrastructure.config.TestConfig;
 import com.hoangluongtran0309.devblog.infrastructure.security.StubApplicationUserDetailsService;
+import com.hoangluongtran0309.devblog.infrastructure.web.GlobalModelAttributeAdvice;
 
-@WebMvcTest(AdminController.class)
+@WebMvcTest(controllers = AdminController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = GlobalModelAttributeAdvice.class))
+@Import(TestConfig.class)
 @TestPropertySource(properties = "devblog.remember-me-key=test-secret-key")
 class AdminControllerTest {
 
@@ -62,20 +61,5 @@ class AdminControllerTest {
                 .param("confirmPassword", "123456789"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/admin/login"));
-    }
-
-    @TestConfiguration
-    @Import(SecurityConfiguration.class)
-    static class TestConfig {
-
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-            return new BCryptPasswordEncoder();
-        }
-
-        @Bean
-        public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-            return new StubApplicationUserDetailsService(passwordEncoder);
-        }
     }
 }
