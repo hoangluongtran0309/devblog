@@ -1,0 +1,98 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{client/layout/main}"
+>
+  <head>
+    <title>Projects - DevBlog</title>
+  </head>
+
+  <body>
+    <div layout:fragment="content">
+      <div
+        th:replace="~{client/fragments/searchs :: searchHero(
+        'Projects',
+        'Explore open-source projects, side projects, and experiments.',
+        '/projects/search',
+        ${keyword}
+      )}"
+      ></div>
+
+      <div
+        class="bg-light-bg-secondary dark:bg-dark-bg-secondary transition-colors duration-300 py-12"
+      >
+        <div
+          class="container mx-auto px-4 sm:px-8 lg:px-8 max-w-[1150px] lg:grid lg:grid-cols-[5fr_2fr] lg:gap-16"
+        >
+          <div class="projects">
+            <div
+              th:replace="~{client/fragments/searchs :: searchMeta(
+              ${keyword},
+              '/projects',
+              ${null},
+              ${currentTagSlug},
+              ${projects.totalElements},
+              'All Projects'
+            )}"
+            ></div>
+
+            <div class="project-card-group mb-10">
+              <th:block th:if="${projects.isEmpty()}">
+                <div class="text-center py-20">
+                  <ion-icon
+                    name="code-slash-outline"
+                    class="text-5xl text-light-fg-tertiary dark:text-dark-fg-tertiary mb-4"
+                  ></ion-icon>
+                  <p
+                    class="text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 text-lg"
+                  >
+                    No projects found.
+                  </p>
+                  <a
+                    href="/projects"
+                    class="mt-6 inline-block px-5 py-2.5 bg-accent text-white rounded-full hover:opacity-90 transition-opacity"
+                  >
+                    Browse all projects
+                  </a>
+                </div>
+              </th:block>
+
+              <th:block th:each="project : ${projects}">
+                <th:block
+                  th:replace="~{client/fragments/cards :: card(
+                  @{/projects/{s}(s=${project.projectSlug.asString()})},
+                  ${project.imagePreview.asString()},
+                  ${project.projectName.asString()},
+                  ${null},
+                  ${null},
+                  ${project.publishedAt},
+                  ${project.projectName.asString()},
+                  ${project.projectSummary.asString()},
+                  ${project.tags},
+                  '/projects/tag/',
+                  'View project'
+                )}"
+                ></th:block>
+              </th:block>
+            </div>
+
+            <div
+              th:with="baseUrl=${currentTagSlug != null}
+                ? '/projects/tag/' + currentTagSlug.asString()
+                : (keyword != null and !#strings.isEmpty(keyword))
+                  ? '/projects/search?keyword=' + keyword
+                  : '/projects'"
+              th:replace="~{client/fragments/paginations :: pagination(${projects}, ${baseUrl})}"
+            ></div>
+          </div>
+
+          <th:block
+            th:replace="~{client/fragments/sidebar :: sidebar}"
+          ></th:block>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

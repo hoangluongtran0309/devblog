@@ -1,0 +1,77 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <article
+      th:fragment="card(detailHref, imageUrl, imageAlt, categoryName, categoryHref, publishedAt, title, summary, tags, tagBaseUrl, ctaLabel)"
+      class="flex flex-col sm:flex-row gap-6 mb-8 pb-8 border-b border-light-action-primary dark:border-dark-action-primary transition-colors duration-300 last:border-0"
+    >
+      <a
+        th:href="${detailHref}"
+        class="flex-shrink-0 w-full sm:w-48 h-40 rounded-xl overflow-hidden block"
+      >
+        <img
+          th:src="${imageUrl}"
+          th:alt="${imageAlt}"
+          class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          loading="lazy"
+        />
+      </a>
+
+      <div class="flex flex-col justify-between flex-1 min-w-0">
+        <div>
+          <div class="flex flex-wrap items-center gap-3 mb-2">
+            <a
+              th:if="${categoryName != null}"
+              th:href="${categoryHref}"
+              th:text="${categoryName}"
+              class="text-xs font-semibold text-accent uppercase tracking-wide hover:underline"
+            ></a>
+            <span
+              th:if="${categoryName != null}"
+              class="text-light-fg-tertiary dark:text-dark-fg-tertiary text-xs transition-colors duration-300"
+              >·</span
+            >
+            <time
+              th:datetime="${publishedAt}"
+              th:text="${#temporals.format(publishedAt, 'MMM dd, yyyy')}"
+              class="text-xs text-light-fg-tertiary dark:text-dark-fg-tertiary transition-colors duration-300"
+            ></time>
+          </div>
+
+          <h3
+            class="text-lg font-bold text-light-fg-primary dark:text-dark-fg-primary transition-colors duration-300 mb-2 leading-snug"
+          >
+            <a
+              th:href="${detailHref}"
+              th:text="${title}"
+              class="hover:text-accent transition-colors duration-300 line-clamp-2"
+            ></a>
+          </h3>
+
+          <p
+            th:text="${summary}"
+            class="text-sm text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 line-clamp-2"
+          ></p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
+          <div class="flex flex-wrap gap-2">
+            <a
+              th:each="tag : ${tags}"
+              th:href="${tagBaseUrl + tag.tagSlug.asString()}"
+              th:text="|#${tag.tagName.asString()}|"
+              class="text-xs px-3 py-1 rounded-full bg-light-action-secondary dark:bg-dark-action-secondary text-light-fg-tertiary dark:text-dark-fg-tertiary hover:bg-accent hover:text-white transition-colors duration-300"
+            ></a>
+          </div>
+          <a
+            th:href="${detailHref}"
+            th:text="${ctaLabel}"
+            class="inline-flex items-center gap-1 text-sm text-accent font-medium hover:gap-2 transition-all duration-200 flex-shrink-0"
+          >
+            <ion-icon name="arrow-forward-outline" class="text-sm"></ion-icon>
+          </a>
+        </div>
+      </div>
+    </article>
+  </body>
+</html>

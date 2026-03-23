@@ -1,0 +1,114 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div
+      th:fragment="searchHero(pageTitle, pageSubtitle, searchAction, keyword)"
+      class="bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-300 pt-10 pb-12 text-center"
+    >
+      <div class="container mx-auto px-4 sm:px-8 lg:px-8 max-w-[1150px]">
+        <h1
+          th:text="${pageTitle}"
+          class="text-3xl sm:text-4xl font-black text-light-fg-primary dark:text-dark-fg-primary transition-colors duration-300 mb-3"
+        ></h1>
+
+        <p
+          th:text="${pageSubtitle}"
+          class="text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 text-lg"
+        ></p>
+
+        <form
+          th:action="${searchAction}"
+          method="get"
+          class="mt-6 flex justify-center"
+        >
+          <div class="relative w-full max-w-xl">
+            <input
+              type="text"
+              name="keyword"
+              th:value="${keyword}"
+              placeholder="Search..."
+              class="w-full pl-5 pr-12 py-3 rounded-full bg-light-bg-secondary dark:bg-dark-bg-secondary text-light-fg-primary dark:text-dark-fg-primary border border-light-action-primary dark:border-dark-action-primary focus:outline-none focus:border-accent transition-colors duration-300"
+            />
+            <button
+              type="submit"
+              class="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-accent text-white rounded-full hover:opacity-90 transition-opacity"
+            >
+              <ion-icon name="search-outline"></ion-icon>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      th:fragment="searchMeta(keyword, clearHref, currentCategorySlug, currentTagSlug, totalElements, sectionTitle)"
+    >
+      <div
+        th:if="${(keyword != null and !#strings.isEmpty(keyword)) or currentCategorySlug != null or currentTagSlug != null}"
+        class="flex flex-wrap items-center gap-3 mb-6"
+      >
+        <th:block th:if="${keyword != null and !#strings.isEmpty(keyword)}">
+          <div
+            class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent text-accent text-sm font-medium"
+          >
+            <ion-icon name="search-outline" class="text-sm"></ion-icon>
+            <span>Search:</span>
+            <span th:text="${keyword}"></span>
+            <a th:href="${clearHref}" class="ml-1 hover:opacity-70">
+              <ion-icon name="close-outline"></ion-icon>
+            </a>
+          </div>
+        </th:block>
+
+        <th:block th:if="${currentCategorySlug != null}">
+          <div
+            class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent text-accent text-sm font-medium"
+          >
+            <ion-icon name="folder-outline" class="text-sm"></ion-icon>
+            <span>Category:</span>
+            <span th:text="${currentCategorySlug.asString()}"></span>
+            <a th:href="${clearHref}" class="ml-1 hover:opacity-70">
+              <ion-icon name="close-outline"></ion-icon>
+            </a>
+          </div>
+        </th:block>
+
+        <th:block th:if="${currentTagSlug != null}">
+          <div
+            class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent text-accent text-sm font-medium"
+          >
+            <ion-icon name="pricetag-outline" class="text-sm"></ion-icon>
+            <span>Tag:</span>
+            <span th:text="${currentTagSlug.asString()}"></span>
+            <a th:href="${clearHref}" class="ml-1 hover:opacity-70">
+              <ion-icon name="close-outline"></ion-icon>
+            </a>
+          </div>
+        </th:block>
+      </div>
+
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+          <span class="w-1 h-6 rounded-full bg-accent"></span>
+          <h2
+            class="text-xl font-bold text-light-fg-primary dark:text-dark-fg-primary transition-colors duration-300"
+          >
+            <span th:if="${keyword != null and !#strings.isEmpty(keyword)}"
+              >Search Results</span
+            >
+            <span th:if="${currentCategorySlug != null}">By Category</span>
+            <span th:if="${currentTagSlug != null}">By Tag</span>
+            <span
+              th:if="${(keyword == null or #strings.isEmpty(keyword)) and currentCategorySlug == null and currentTagSlug == null}"
+              th:text="${sectionTitle}"
+            ></span>
+          </h2>
+        </div>
+        <span
+          class="text-sm text-light-fg-tertiary dark:text-dark-fg-tertiary transition-colors duration-300"
+          th:text="|${totalElements} results|"
+        ></span>
+      </div>
+    </div>
+  </body>
+</html>

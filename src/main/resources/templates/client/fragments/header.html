@@ -50,6 +50,24 @@
               </li>
               <li>
                 <a
+                  th:href="@{/articles}"
+                  th:classappend="${#strings.equals(activePage, 'about')} ? 'text-accent' : ''"
+                  class="text-light-fg-secondary dark:text-dark-fg-secondary font-bold hover:text-accent dark:hover:text-accent transition-colors duration-300"
+                >
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a
+                  th:href="@{/projects}"
+                  th:classappend="${#strings.equals(activePage, 'about')} ? 'text-accent' : ''"
+                  class="text-light-fg-secondary dark:text-dark-fg-secondary font-bold hover:text-accent dark:hover:text-accent transition-colors duration-300"
+                >
+                  Projects
+                </a>
+              </li>
+              <li>
+                <a
                   th:href="@{/about}"
                   th:classappend="${#strings.equals(activePage, 'about')} ? 'text-accent' : ''"
                   class="text-light-fg-secondary dark:text-dark-fg-secondary font-bold hover:text-accent dark:hover:text-accent transition-colors duration-300"
@@ -112,6 +130,20 @@
                 </li>
                 <li class="mb-2">
                   <a
+                    th:href="@{/articles}"
+                    class="text-xl text-light-fg-secondary dark:text-dark-fg-secondary hover:text-accent dark:hover:text-accent transition-colors duration-300"
+                    >Blog</a
+                  >
+                </li>
+                <li class="mb-2">
+                  <a
+                    th:href="@{/projects}"
+                    class="text-xl text-light-fg-secondary dark:text-dark-fg-secondary hover:text-accent dark:hover:text-accent transition-colors duration-300"
+                    >Projects</a
+                  >
+                </li>
+                <li class="mb-2">
+                  <a
                     th:href="@{/about}"
                     class="text-xl text-light-fg-secondary dark:text-dark-fg-secondary hover:text-accent dark:hover:text-accent transition-colors duration-300"
                     >About Me</a
@@ -127,33 +159,20 @@
               </ul>
             </div>
 
-            <div>
+            <div th:if="${categories != null and !categories.isEmpty()}">
               <p
                 class="text-xl font-bold text-light-fg-primary dark:text-dark-fg-primary transition-colors duration-300 mb-4"
               >
                 Topics
               </p>
               <ul>
-                <li class="mb-2">
+                <li th:each="category : ${categories}" class="mb-2">
                   <a
-                    th:href="@{/topics/database}"
+                    th:href="@{/articles/category/{slug}(slug=${category.categorySlug.asString()})}"
+                    th:text="${category.categoryName.asString()}"
+                    th:classappend="${currentCategorySlug != null and currentCategorySlug.asString() == category.categorySlug.asString()} ? 'text-accent' : ''"
                     class="text-xl text-light-fg-secondary dark:text-dark-fg-secondary hover:text-accent dark:hover:text-accent transition-colors duration-300"
-                    >Database</a
-                  >
-                </li>
-                <li class="mb-2">
-                  <a
-                    th:href="@{/topics/accessibility}"
-                    class="text-xl text-light-fg-secondary dark:text-dark-fg-secondary hover:text-accent dark:hover:text-accent transition-colors duration-300"
-                    >Accessibility</a
-                  >
-                </li>
-                <li class="mb-2">
-                  <a
-                    th:href="@{/topics/performance}"
-                    class="text-xl text-light-fg-secondary dark:text-dark-fg-secondary hover:text-accent dark:hover:text-accent transition-colors duration-300"
-                    >Web Performance</a
-                  >
+                  ></a>
                 </li>
               </ul>
             </div>
