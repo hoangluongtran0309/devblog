@@ -1,0 +1,103 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div
+      th:fragment="table-header-bar(page, itemLabel)"
+      class="px-6 py-4 border-b border-light-border dark:border-dark-border flex items-center justify-between transition-colors duration-300"
+    >
+      <span
+        class="text-sm text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300"
+      >
+        Total:
+        <span
+          class="font-semibold text-light-fg-primary dark:text-dark-fg-primary"
+          th:text="${page.totalElements}"
+          >0</span
+        >
+        <span th:text="${page.totalElements == 1 ? itemLabel : itemLabel}"
+          >items</span
+        >
+      </span>
+    </div>
+
+    <th
+      th:fragment="table-th(label, extraClass)"
+      th:classappend="${extraClass}"
+      class="text-left px-6 py-3 font-semibold text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300"
+      th:text="${label}"
+    >
+      Column
+    </th>
+
+    <tr
+      th:fragment="table-empty-row(colspan, icon, message, createUrl, createLabel)"
+    >
+      <td th:colspan="${colspan}" class="px-6 py-16 text-center">
+        <div
+          class="flex flex-col items-center gap-3 text-light-fg-tertiary dark:text-dark-fg-tertiary transition-colors duration-300"
+        >
+          <ion-icon th:name="${icon}" class="text-5xl"></ion-icon>
+          <p class="font-medium" th:text="${message}">No items yet</p>
+          <a
+            th:if="${createUrl != null}"
+            th:href="${createUrl}"
+            class="text-accent text-sm hover:underline"
+            th:text="${createLabel}"
+            >Create one</a
+          >
+        </div>
+      </td>
+    </tr>
+
+    <a
+      th:fragment="table-action-view(url)"
+      th:href="${url}"
+      target="_blank"
+      title="View"
+      class="w-8 h-8 flex items-center justify-center rounded-lg text-light-fg-tertiary dark:text-dark-fg-tertiary hover:bg-light-action-secondary dark:hover:bg-dark-action-secondary hover:text-accent transition-all duration-200"
+    >
+      <ion-icon name="eye-outline" class="text-base"></ion-icon>
+    </a>
+
+    <a
+      th:fragment="table-action-edit(url)"
+      th:href="${url}"
+      title="Edit"
+      class="w-8 h-8 flex items-center justify-center rounded-lg text-light-fg-tertiary dark:text-dark-fg-tertiary hover:bg-light-action-secondary dark:hover:bg-dark-action-secondary hover:text-accent transition-all duration-200"
+    >
+      <ion-icon name="create-outline" class="text-base"></ion-icon>
+    </a>
+
+    <form
+      th:fragment="table-action-publish(url, confirmMsg)"
+      th:action="${url}"
+      method="post"
+      th:data-confirm="${confirmMsg ?: 'Are you sure you want to publish this item?'}"
+      onsubmit="return confirm(this.dataset.confirm);"
+    >
+      <button
+        type="submit"
+        title="Publish"
+        class="w-8 h-8 flex items-center justify-center rounded-lg text-light-fg-tertiary dark:text-dark-fg-tertiary hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 transition-all duration-200"
+      >
+        <ion-icon name="send-outline" class="text-base"></ion-icon>
+      </button>
+    </form>
+
+    <form
+      th:fragment="table-action-delete(url, confirmMsg)"
+      th:action="${url}"
+      method="post"
+      th:data-confirm="${confirmMsg ?: 'Are you sure you want to delete this item?'}"
+      onsubmit="return confirm(this.dataset.confirm);"
+    >
+      <button
+        type="submit"
+        title="Delete"
+        class="w-8 h-8 flex items-center justify-center rounded-lg text-light-fg-tertiary dark:text-dark-fg-tertiary hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 transition-all duration-200"
+      >
+        <ion-icon name="trash-outline" class="text-base"></ion-icon>
+      </button>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div
+      th:fragment="pagination(page, baseUrl)"
+      th:if="${page.totalPages > 1}"
+      class="px-6 py-4 border-t border-light-border dark:border-dark-border flex items-center justify-between gap-4 transition-colors duration-300"
+    >
+      <p
+        class="text-sm text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 shrink-0"
+      >
+        <span
+          class="font-semibold text-light-fg-primary dark:text-dark-fg-primary"
+          th:text="${page.number * page.size + 1}"
+          >1</span
+        >
+        –
+        <span
+          class="font-semibold text-light-fg-primary dark:text-dark-fg-primary"
+          th:text="${page.last ? page.totalElements : (page.number + 1) * page.size}"
+          >10</span
+        >
+        of
+        <span
+          class="font-semibold text-light-fg-primary dark:text-dark-fg-primary"
+          th:text="${page.totalElements}"
+          >100</span
+        >
+      </p>
+
+      <div class="flex items-center gap-1">
+        <a
+          th:href="${(baseUrl.contains('?') ? baseUrl + '&' : baseUrl + '?') + 'page=' + (page.number - 1)}"
+          th:classappend="${page.first} ? 'pointer-events-none opacity-40' : 'hover:bg-light-action-secondary dark:hover:bg-dark-action-secondary hover:text-accent'"
+          class="w-8 h-8 flex items-center justify-center rounded-lg text-light-fg-secondary dark:text-dark-fg-secondary transition-all duration-200"
+          title="Previous page"
+        >
+          <ion-icon name="chevron-back-outline" class="text-sm"></ion-icon>
+        </a>
+
+        <th:block
+          th:with="
+          curr=${page.number},
+          total=${page.totalPages},
+          winStart=${curr - 2 < 0 ? 0 : curr - 2},
+          winEnd=${curr + 2 >= page.totalPages ? page.totalPages - 1 : curr + 2}
+        "
+        >
+          <th:block th:if="${winStart > 0}">
+            <a
+              th:href="${(baseUrl.contains('?') ? baseUrl + '&' : baseUrl + '?') + 'page=0'}"
+              class="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium text-light-fg-secondary dark:text-dark-fg-secondary hover:bg-light-action-secondary dark:hover:bg-dark-action-secondary hover:text-accent transition-all duration-200"
+            >
+              1
+            </a>
+
+            <span
+              th:if="${winStart > 1}"
+              class="w-8 h-8 flex items-center justify-center text-light-fg-tertiary dark:text-dark-fg-tertiary text-sm select-none"
+            >
+              &hellip;
+            </span>
+          </th:block>
+
+          <th:block th:each="i : ${#numbers.sequence(winStart, winEnd)}">
+            <a
+              th:href="${(baseUrl.contains('?') ? baseUrl + '&' : baseUrl + '?') + 'page=' + i}"
+              th:text="${i + 1}"
+              th:classappend="${i == curr}
+                 ? 'bg-accent text-white shadow-sm'
+                 : 'text-light-fg-secondary dark:text-dark-fg-secondary hover:bg-light-action-secondary dark:hover:bg-dark-action-secondary hover:text-accent'"
+              class="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200"
+            >
+            </a>
+          </th:block>
+
+          <th:block th:if="${winEnd < total - 1}">
+            <span
+              th:if="${winEnd < total - 2}"
+              class="w-8 h-8 flex items-center justify-center text-light-fg-tertiary dark:text-dark-fg-tertiary text-sm select-none"
+            >
+              &hellip;
+            </span>
+            <a
+              th:href="${(baseUrl.contains('?') ? baseUrl + '&' : baseUrl + '?') + 'page=' + (total - 1)}"
+              th:text="${total}"
+              class="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium text-light-fg-secondary dark:text-dark-fg-secondary hover:bg-light-action-secondary dark:hover:bg-dark-action-secondary hover:text-accent transition-all duration-200"
+            >
+            </a>
+          </th:block>
+        </th:block>
+
+        <a
+          th:href="${(baseUrl.contains('?') ? baseUrl + '&' : baseUrl + '?') + 'page=' + (page.number + 1)}"
+          th:classappend="${page.last} ? 'pointer-events-none opacity-40' : 'hover:bg-light-action-secondary dark:hover:bg-dark-action-secondary hover:text-accent'"
+          class="w-8 h-8 flex items-center justify-center rounded-lg text-light-fg-secondary dark:text-dark-fg-secondary transition-all duration-200"
+          title="Next page"
+        >
+          <ion-icon name="chevron-forward-outline" class="text-sm"></ion-icon>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

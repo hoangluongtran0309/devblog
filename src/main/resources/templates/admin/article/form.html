@@ -1,0 +1,540 @@
+<!doctype html>
+<html
+  th:lang="|${#locale.language}-${#locale.country}|"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{admin/layout/main}"
+>
+  <head>
+    <title
+      th:text="${editMode.name() == 'CREATE'} ? 'New Article - Admin Panel' : 'Edit Article - Admin Panel'"
+    >
+      Article Form - Admin Panel
+    </title>
+  </head>
+
+  <body>
+    <th:block layout:fragment="content">
+      <div class="flex items-center gap-3 mb-6">
+        <a
+          th:href="@{/admin/articles}"
+          class="w-9 h-9 flex items-center justify-center rounded-lg text-light-fg-secondary dark:text-dark-fg-secondary hover:bg-light-action-secondary dark:hover:bg-dark-action-secondary hover:text-accent transition-all duration-200"
+        >
+          <ion-icon name="arrow-back-outline" class="text-xl"></ion-icon>
+        </a>
+        <div>
+          <h2
+            class="text-2xl font-bold"
+            th:text="${editMode.name() == 'CREATE'} ? 'New Article' : 'Edit Article'"
+          >
+            Article
+          </h2>
+          <p
+            class="text-sm text-light-fg-secondary dark:text-dark-fg-secondary mt-1 transition-colors duration-300"
+            th:text="${editMode.name() == 'CREATE'} ? 'Fill in the details to create a new article' : 'Update the article information'"
+          >
+            Form description
+          </p>
+        </div>
+      </div>
+
+      <div class="mb-6" th:if="${errorMessage}">
+        <th:block
+          th:replace="~{admin/fragments/alerts :: alert('error', ${errorMessage})}"
+        ></th:block>
+      </div>
+
+      <form
+        th:if="${editMode.name() == 'CREATE'}"
+        th:action="@{/admin/articles/new}"
+        th:object="${createArticleForm}"
+        method="post"
+        class="space-y-6"
+      >
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div class="xl:col-span-2 space-y-6">
+            <div
+              class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300"
+            >
+              <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                <ion-icon
+                  name="document-text-outline"
+                  class="text-accent text-lg"
+                ></ion-icon>
+                Basic Information
+              </h3>
+              <div class="space-y-4">
+                <th:block
+                  th:replace="~{admin/fragments/fields :: text-field(
+                  'articleTitle', 'articleTitle',
+                  null, 'Article Title',
+                  'pencil-outline',
+                  'Enter article title...',
+                  true, 'off',
+                  *{articleTitle},
+                  'articleTitle', null
+                )}"
+                ></th:block>
+
+                <div>
+                  <label
+                    for="articleSummary"
+                    class="block text-sm font-medium mb-2 transition-colors duration-300"
+                  >
+                    Summary <span class="text-red-500 ml-0.5">*</span>
+                  </label>
+                  <div class="relative">
+                    <textarea
+                      id="articleSummary"
+                      name="articleSummary"
+                      th:text="*{articleSummary}"
+                      rows="3"
+                      placeholder="Brief summary of your article..."
+                      th:class="${#fields.hasErrors('articleSummary')}
+                        ? 'w-full px-4 py-3 bg-red-50 dark:bg-red-900/10 border border-red-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300 resize-none'
+                        : 'w-full px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-300 resize-none'"
+                    ></textarea>
+                  </div>
+                  <div
+                    th:if="${#fields.hasErrors('articleSummary')}"
+                    class="flex items-center gap-1.5 mt-1.5"
+                  >
+                    <ion-icon
+                      name="information-circle-outline"
+                      class="text-sm text-red-500 shrink-0"
+                    ></ion-icon>
+                    <p
+                      th:errors="*{articleSummary}"
+                      class="text-xs text-red-500"
+                    ></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: ck-editor-field(
+                'articleContent',
+                'articleContent',
+                'Content',
+                true,
+                *{articleContent},
+                'articleContent'
+              )}"
+            ></th:block>
+          </div>
+
+          <div class="space-y-6">
+            <div
+              class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300"
+            >
+              <div class="space-y-4">
+                <th:block
+                  th:replace="~{admin/fragments/fields :: text-field(
+                  'articleSlug', 'articleSlug',
+                  null, 'Slug',
+                  'link-outline',
+                  'my-article-slug',
+                  true, 'off',
+                  *{articleSlug},
+                  'articleSlug', null
+                )}"
+                ></th:block>
+
+                <th:block
+                  th:replace="~{admin/fragments/fields :: text-field(
+                  'imagePreview', 'imagePreview',
+                  null, 'Image Preview URL',
+                  'image-outline',
+                  'https://...',
+                  false, 'off',
+                  *{imagePreview},
+                  'imagePreview', null
+                )}"
+                ></th:block>
+              </div>
+            </div>
+
+            <div
+              class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300"
+            >
+              <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                <ion-icon
+                  name="folder-outline"
+                  class="text-accent text-lg"
+                ></ion-icon>
+                Category
+              </h3>
+              <div>
+                <label
+                  for="categoryId"
+                  class="block text-sm font-medium mb-2 transition-colors duration-300"
+                >
+                  Select Category <span class="text-red-500 ml-0.5">*</span>
+                </label>
+                <select
+                  id="categoryId"
+                  name="categoryId"
+                  th:class="${#fields.hasErrors('categoryId')}
+                    ? 'w-full px-4 py-3 bg-red-50 dark:bg-red-900/10 border border-red-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300'
+                    : 'w-full px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-300'"
+                >
+                  <option value="" disabled selected>
+                    — Choose a category —
+                  </option>
+                  <option
+                    th:each="category : ${categories}"
+                    th:value="${category.id.asString()}"
+                    th:text="${category.categoryName.asString()}"
+                    th:selected="${createArticleForm.categoryId != null and createArticleForm.categoryId.asString() == category.id.asString()}"
+                  ></option>
+                </select>
+                <div
+                  th:if="${#fields.hasErrors('categoryId')}"
+                  class="flex items-center gap-1.5 mt-1.5"
+                >
+                  <ion-icon
+                    name="information-circle-outline"
+                    class="text-sm text-red-500 shrink-0"
+                  ></ion-icon>
+                  <p th:errors="*{categoryId}" class="text-xs text-red-500"></p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300"
+            >
+              <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                <ion-icon
+                  name="pricetags-outline"
+                  class="text-accent text-lg"
+                ></ion-icon>
+                Tags
+              </h3>
+              <div>
+                <p
+                  class="text-sm font-medium mb-3 transition-colors duration-300"
+                >
+                  Select Tags <span class="text-red-500 ml-0.5">*</span>
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <label
+                    th:each="tag : ${tags}"
+                    class="group inline-flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      name="tagIds"
+                      th:value="${tag.id.asString()}"
+                      th:checked="${createArticleForm.tagIds != null and createArticleForm.tagIds.contains(tag.id)}"
+                      class="hidden tag-checkbox"
+                    />
+                    <span
+                      class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium border border-light-border dark:border-dark-border text-light-fg-secondary dark:text-dark-fg-secondary hover:border-accent hover:text-accent transition-all duration-200 tag-label"
+                      th:text="${tag.tagName.asString()}"
+                      >Tag</span
+                    >
+                  </label>
+                </div>
+                <div
+                  th:if="${#fields.hasErrors('tagIds')}"
+                  class="flex items-center gap-1.5 mt-2"
+                >
+                  <ion-icon
+                    name="information-circle-outline"
+                    class="text-sm text-red-500 shrink-0"
+                  ></ion-icon>
+                  <p th:errors="*{tagIds}" class="text-xs text-red-500"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-3">
+              <button
+                type="submit"
+                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity duration-200"
+              >
+                <ion-icon
+                  name="cloud-upload-outline"
+                  class="text-lg"
+                ></ion-icon>
+                Create Article
+              </button>
+              <a
+                th:href="@{/admin/articles}"
+                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary text-light-fg-secondary dark:text-dark-fg-secondary text-sm font-semibold rounded-lg hover:bg-light-action-primary dark:hover:bg-dark-action-primary transition-colors duration-200"
+              >
+                Cancel
+              </a>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <form
+        th:if="${editMode.name() == 'UPDATE'}"
+        th:action="@{/admin/articles/{id}/update(id=${updateArticleForm.id})}"
+        th:object="${updateArticleForm}"
+        method="post"
+        class="space-y-6"
+      >
+        <input type="hidden" th:field="*{id}" />
+        <input type="hidden" th:field="*{version}" />
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div class="xl:col-span-2 space-y-6">
+            <div
+              class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300"
+            >
+              <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                <ion-icon
+                  name="document-text-outline"
+                  class="text-accent text-lg"
+                ></ion-icon>
+                Basic Information
+              </h3>
+              <div class="space-y-4">
+                <th:block
+                  th:replace="~{admin/fragments/fields :: text-field(
+                  'articleTitle', 'articleTitle',
+                  null, 'Article Title',
+                  'pencil-outline',
+                  'Enter article title...',
+                  true, 'off',
+                  *{articleTitle},
+                  'articleTitle', null
+                )}"
+                ></th:block>
+
+                <div>
+                  <label
+                    for="articleSummary"
+                    class="block text-sm font-medium mb-2 transition-colors duration-300"
+                  >
+                    Summary <span class="text-red-500 ml-0.5">*</span>
+                  </label>
+                  <textarea
+                    id="articleSummary"
+                    name="articleSummary"
+                    th:text="*{articleSummary}"
+                    rows="3"
+                    placeholder="Brief summary of your article..."
+                    th:class="${#fields.hasErrors('articleSummary')}
+                      ? 'w-full px-4 py-3 bg-red-50 dark:bg-red-900/10 border border-red-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300 resize-none'
+                      : 'w-full px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-300 resize-none'"
+                  ></textarea>
+                  <div
+                    th:if="${#fields.hasErrors('articleSummary')}"
+                    class="flex items-center gap-1.5 mt-1.5"
+                  >
+                    <ion-icon
+                      name="information-circle-outline"
+                      class="text-sm text-red-500 shrink-0"
+                    ></ion-icon>
+                    <p
+                      th:errors="*{articleSummary}"
+                      class="text-xs text-red-500"
+                    ></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: ck-editor-field(
+                'articleContent',
+                'articleContent',
+                'Content',
+                true,
+                *{articleContent},
+                'articleContent'
+              )}"
+            ></th:block>
+          </div>
+
+          <div class="space-y-6">
+            <div
+              class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300"
+            >
+              <div class="space-y-4">
+                <th:block
+                  th:replace="~{admin/fragments/fields :: text-field(
+                  'articleSlug', 'articleSlug',
+                  null, 'Slug',
+                  'link-outline',
+                  'my-article-slug',
+                  true, 'off',
+                  *{articleSlug},
+                  'articleSlug', null
+                )}"
+                ></th:block>
+
+                <th:block
+                  th:replace="~{admin/fragments/fields :: text-field(
+                  'imagePreview', 'imagePreview',
+                  null, 'Image Preview URL',
+                  'image-outline',
+                  'https://...',
+                  false, 'off',
+                  *{imagePreview},
+                  'imagePreview', null
+                )}"
+                ></th:block>
+              </div>
+            </div>
+
+            <div
+              class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300"
+            >
+              <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                <ion-icon
+                  name="folder-outline"
+                  class="text-accent text-lg"
+                ></ion-icon>
+                Category
+              </h3>
+              <div>
+                <label
+                  for="categoryId"
+                  class="block text-sm font-medium mb-2 transition-colors duration-300"
+                >
+                  Select Category <span class="text-red-500 ml-0.5">*</span>
+                </label>
+                <select
+                  id="categoryId"
+                  name="categoryId"
+                  th:class="${#fields.hasErrors('categoryId')}
+                    ? 'w-full px-4 py-3 bg-red-50 dark:bg-red-900/10 border border-red-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300'
+                    : 'w-full px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-300'"
+                >
+                  <option value="" disabled>— Choose a category —</option>
+                  <option
+                    th:each="category : ${categories}"
+                    th:value="${category.id.asString()}"
+                    th:text="${category.categoryName.asString()}"
+                    th:selected="${updateArticleForm.categoryId != null and updateArticleForm.categoryId.asString() == category.id.asString()}"
+                  ></option>
+                </select>
+                <div
+                  th:if="${#fields.hasErrors('categoryId')}"
+                  class="flex items-center gap-1.5 mt-1.5"
+                >
+                  <ion-icon
+                    name="information-circle-outline"
+                    class="text-sm text-red-500 shrink-0"
+                  ></ion-icon>
+                  <p th:errors="*{categoryId}" class="text-xs text-red-500"></p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300"
+            >
+              <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                <ion-icon
+                  name="pricetags-outline"
+                  class="text-accent text-lg"
+                ></ion-icon>
+                Tags
+              </h3>
+              <div>
+                <p
+                  class="text-sm font-medium mb-3 transition-colors duration-300"
+                >
+                  Select Tags <span class="text-red-500 ml-0.5">*</span>
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <label
+                    th:each="tag : ${tags}"
+                    class="group inline-flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      name="tagIds"
+                      th:value="${tag.id.asString()}"
+                      th:checked="${updateArticleForm.tagIds != null and updateArticleForm.tagIds.contains(tag.id)}"
+                      class="hidden tag-checkbox"
+                    />
+                    <span
+                      class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium border border-light-border dark:border-dark-border text-light-fg-secondary dark:text-dark-fg-secondary hover:border-accent hover:text-accent transition-all duration-200 tag-label"
+                      th:text="${tag.tagName.asString()}"
+                      >Tag</span
+                    >
+                  </label>
+                </div>
+                <div
+                  th:if="${#fields.hasErrors('tagIds')}"
+                  class="flex items-center gap-1.5 mt-2"
+                >
+                  <ion-icon
+                    name="information-circle-outline"
+                    class="text-sm text-red-500 shrink-0"
+                  ></ion-icon>
+                  <p th:errors="*{tagIds}" class="text-xs text-red-500"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-3">
+              <button
+                type="submit"
+                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity duration-200"
+              >
+                <ion-icon
+                  name="checkmark-circle-outline"
+                  class="text-lg"
+                ></ion-icon>
+                Save Changes
+              </button>
+              <a
+                th:href="@{/admin/articles}"
+                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary text-light-fg-secondary dark:text-dark-fg-secondary text-sm font-semibold rounded-lg hover:bg-light-action-primary dark:hover:bg-dark-action-primary transition-colors duration-200"
+              >
+                Cancel
+              </a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </th:block>
+
+    <th:block layout:fragment="scripts">
+      <th:block
+        th:replace="~{admin/fragments/fields :: ck-editor-js('articleContent')}"
+      ></th:block>
+
+      <script>
+        document.querySelectorAll(".tag-checkbox").forEach(function (checkbox) {
+          const label = checkbox.nextElementSibling;
+          function sync() {
+            if (checkbox.checked) {
+              label.classList.add(
+                "bg-accent/10",
+                "text-accent",
+                "border-accent",
+              );
+              label.classList.remove(
+                "text-light-fg-secondary",
+                "dark:text-dark-fg-secondary",
+              );
+            } else {
+              label.classList.remove(
+                "bg-accent/10",
+                "text-accent",
+                "border-accent",
+              );
+              label.classList.add(
+                "text-light-fg-secondary",
+                "dark:text-dark-fg-secondary",
+              );
+            }
+          }
+          sync();
+          checkbox.addEventListener("change", sync);
+        });
+      </script>
+    </th:block>
+  </body>
+</html>
