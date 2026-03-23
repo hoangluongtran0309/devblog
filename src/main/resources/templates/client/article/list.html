@@ -6,43 +6,40 @@
   layout:decorate="~{client/layout/main}"
 >
   <head>
-    <title>DevBlog - Hoang Luong Tran's Personal Blog</title>
+    <title>Articles - DevBlog</title>
   </head>
 
   <body>
     <div layout:fragment="content">
-      <th:block th:replace="~{client/fragments/hero :: hero}"></th:block>
+      <div
+        th:replace="~{client/fragments/searchs :: searchHero(
+        'Articles',
+        'Explore posts on Backend, Spring Boot, System Design, and more.',
+        '/articles/search',
+        ${keyword}
+      )}"
+      ></div>
 
       <div
-        class="bg-light-bg-secondary dark:bg-dark-bg-secondary transition-colors duration-300 py-20"
+        class="bg-light-bg-secondary dark:bg-dark-bg-secondary transition-colors duration-300 py-12"
       >
         <div
           class="container mx-auto px-4 sm:px-8 lg:px-8 max-w-[1150px] lg:grid lg:grid-cols-[5fr_2fr] lg:gap-16"
         >
           <div class="blog">
-            <div class="flex items-center justify-between mb-8">
-              <div class="flex items-center gap-3">
-                <span class="w-1 h-6 rounded-full bg-accent"></span>
-                <h2
-                  class="text-xl font-bold text-light-fg-primary dark:text-dark-fg-primary transition-colors duration-300"
-                >
-                  Recent Posts
-                </h2>
-              </div>
-              <a
-                href="/articles"
-                class="hidden sm:inline-flex items-center gap-1 text-sm text-accent font-medium hover:gap-2 transition-all duration-200"
-              >
-                View all
-                <ion-icon
-                  name="arrow-forward-outline"
-                  class="text-sm"
-                ></ion-icon>
-              </a>
-            </div>
+            <div
+              th:replace="~{client/fragments/searchs :: searchMeta(
+              ${keyword},
+              '/articles',
+              ${currentCategorySlug},
+              ${currentTagSlug},
+              ${articles.totalElements},
+              'All Articles'
+            )}"
+            ></div>
 
-            <div class="blog-card-group mb-12">
-              <th:block th:if="${recentArticles.isEmpty()}">
+            <div class="blog-card-group mb-10">
+              <th:block th:if="${articles.isEmpty()}">
                 <div class="text-center py-20">
                   <ion-icon
                     name="document-text-outline"
@@ -51,12 +48,18 @@
                   <p
                     class="text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 text-lg"
                   >
-                    No articles yet. Check back soon!
+                    No articles found.
                   </p>
+                  <a
+                    href="/articles"
+                    class="mt-6 inline-block px-5 py-2.5 bg-accent text-white rounded-full hover:opacity-90 transition-opacity"
+                  >
+                    Browse all articles
+                  </a>
                 </div>
               </th:block>
 
-              <th:block th:each="article : ${recentArticles}">
+              <th:block th:each="article : ${articles}">
                 <th:block
                   th:replace="~{client/fragments/cards :: card(
                   @{/articles/{s}(s=${article.articleSlug.asString()})},
@@ -75,15 +78,16 @@
               </th:block>
             </div>
 
-            <div class="flex justify-center">
-              <a
-                th:href="@{/articles}"
-                class="inline-flex items-center gap-2 min-w-[10rem] px-5 py-3 bg-light-fg-secondary dark:bg-dark-fg-secondary text-light-bg-secondary dark:text-dark-bg-secondary rounded-full hover:bg-accent hover:text-white dark:hover:text-white transition-colors duration-300"
-              >
-                <ion-icon name="grid-outline" class="text-base"></ion-icon>
-                <span>Load More</span>
-              </a>
-            </div>
+            <div
+              th:with="baseUrl=${currentCategorySlug != null}
+                ? '/articles/category/' + ${currentCategorySlug.asString()}
+                : ${currentTagSlug != null}
+                  ? '/articles/tag/' + ${currentTagSlug.asString()}
+                  : ${keyword != null and !#strings.isEmpty(keyword)}
+                    ? '/articles/search?keyword=' + ${keyword}
+                    : '/articles'"
+              th:replace="~{client/fragments/paginations :: pagination(${articles}, ${baseUrl})}"
+            ></div>
           </div>
 
           <th:block

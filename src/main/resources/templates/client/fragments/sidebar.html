@@ -3,52 +3,136 @@
   <body>
     <div
       th:fragment="sidebar"
-      class="aside hidden lg:block self-stretch mt-12 lg:mt-0"
+      class="aside hidden lg:block self-start lg:sticky lg:top-8 mt-12 lg:mt-0 space-y-6"
     >
       <div
-        class="contact mb-12 bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-300 rounded-xl p-10 shadow-md"
+        th:if="${categories != null and !categories.isEmpty()}"
+        class="bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-300 rounded-xl p-6 shadow-md"
       >
         <h2
-          class="text-2xl font-bold text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 mb-12 text-center leading-snug"
+          class="text-lg font-bold text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 mb-4"
+        >
+          Topics
+        </h2>
+        <div class="flex flex-col gap-2">
+          <a
+            th:each="category : ${categories}"
+            th:href="@{/articles/category/{slug}(slug=${category.categorySlug.asString()})}"
+            th:classappend="${currentCategorySlug != null and currentCategorySlug.asString() == category.categorySlug.asString()} ? 'bg-accent text-white' : 'bg-light-bg-secondary dark:bg-dark-bg-secondary text-light-fg-secondary dark:text-dark-fg-secondary hover:bg-accent hover:text-white'"
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors duration-300 group"
+          >
+            <div
+              th:classappend="${currentCategorySlug != null and currentCategorySlug.asString() == category.categorySlug.asString()} ? 'bg-white/20 text-white' : 'bg-light-action-secondary dark:bg-dark-action-secondary text-accent group-hover:bg-white/20 group-hover:text-white'"
+              class="w-9 h-9 flex items-center justify-center rounded-lg transition-colors duration-300 text-xl flex-shrink-0"
+            >
+              <ion-icon
+                th:if="${category.categoryIcon != null and !#strings.isEmpty(category.categoryIcon)}"
+                th:name="${category.categoryIcon}"
+              ></ion-icon>
+              <ion-icon
+                th:unless="${category.categoryIcon != null and !#strings.isEmpty(category.categoryIcon)}"
+                name="folder-outline"
+              ></ion-icon>
+            </div>
+            <span
+              class="text-sm font-medium"
+              th:text="${category.categoryName.asString()}"
+            ></span>
+          </a>
+        </div>
+      </div>
+
+      <div
+        th:if="${tags != null and !tags.isEmpty()}"
+        class="bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-300 rounded-xl p-6 shadow-md"
+      >
+        <h2
+          class="text-lg font-bold text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 mb-4"
+        >
+          Tags
+        </h2>
+        <div class="flex flex-wrap gap-2">
+          <a
+            th:each="tag : ${tags}"
+            th:href="@{/articles/tag/{slug}(slug=${tag.tagSlug.asString()})}"
+            th:text="|#${tag.tagName.asString()}|"
+            th:classappend="${currentTagSlug != null and currentTagSlug.asString() == tag.tagSlug.asString()} ? 'bg-accent text-white' : 'bg-light-action-secondary dark:bg-dark-action-secondary text-light-fg-tertiary dark:text-dark-fg-tertiary hover:bg-accent hover:text-white'"
+            class="text-xs px-3 py-1.5 rounded-full transition-colors duration-300"
+          ></a>
+        </div>
+      </div>
+
+      <div
+        class="bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-300 rounded-xl p-6 shadow-md"
+      >
+        <h2
+          class="text-lg font-bold text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 mb-4 text-center"
         >
           Let's Talk
         </h2>
+        <p
+          class="text-sm text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 mb-5 text-center"
+        >
+          Do you want to learn more about how I can help your company overcome
+          problems? Let us have a conversation.
+        </p>
+        <ul class="flex justify-center items-center gap-2.5">
+          <li>
+            <a
+              href="#"
+              class="w-11 h-11 bg-light-action-secondary dark:bg-dark-action-secondary transition-colors duration-300 rounded-full flex justify-center items-center text-2xl text-[#5865f2] hover:bg-accent hover:text-white"
+            >
+              <ion-icon name="logo-discord"></ion-icon>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="w-11 h-11 bg-light-action-secondary dark:bg-dark-action-secondary transition-colors duration-300 rounded-full flex justify-center items-center text-2xl text-[#1ca0f1] hover:bg-accent hover:text-white"
+            >
+              <ion-icon name="logo-twitter"></ion-icon>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="w-11 h-11 bg-light-action-secondary dark:bg-dark-action-secondary transition-colors duration-300 rounded-full flex justify-center items-center text-2xl text-[#4267b2] hover:bg-accent hover:text-white"
+            >
+              <ion-icon name="logo-facebook"></ion-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
 
-        <div class="wrapper">
-          <p
-            class="text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 mb-4"
+      <div
+        class="bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-300 rounded-xl p-6 shadow-md"
+      >
+        <h2
+          class="text-lg font-bold text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 mb-4"
+        >
+          Newsletter
+        </h2>
+        <p
+          class="text-sm text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300 mb-4"
+        >
+          Subscribe to our newsletter to be among the first to keep up with the
+          latest updates.
+        </p>
+        <form action="#" class="flex flex-col gap-2">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            required
+            class="w-full px-4 py-2.5 rounded-full bg-light-bg-secondary dark:bg-dark-bg-secondary text-light-fg-primary dark:text-dark-fg-primary border border-light-action-primary dark:border-dark-action-primary focus:outline-none focus:border-accent transition-colors duration-300 text-sm placeholder:text-light-fg-tertiary dark:placeholder:text-dark-fg-tertiary"
+          />
+          <button
+            type="submit"
+            class="w-full px-4 py-2.5 bg-accent text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
           >
-            Do you want to learn more about how I can help your company overcome
-            problems? Let us have a conversation.
-          </p>
-
-          <ul class="social-link flex justify-center items-center gap-2.5">
-            <li>
-              <a
-                href="#"
-                class="icon-box w-11 h-11 bg-light-action-secondary dark:bg-dark-action-secondary transition-colors duration-300 rounded-full flex justify-center items-center text-2xl text-[#5865f2] hover:bg-accent hover:text-white"
-              >
-                <ion-icon name="logo-discord"></ion-icon>
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                class="icon-box w-11 h-11 bg-light-action-secondary dark:bg-dark-action-secondary transition-colors duration-300 rounded-full flex justify-center items-center text-2xl text-[#1ca0f1] hover:bg-accent hover:text-white"
-              >
-                <ion-icon name="logo-twitter"></ion-icon>
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                class="icon-box w-11 h-11 bg-light-action-secondary dark:bg-dark-action-secondary transition-colors duration-300 rounded-full flex justify-center items-center text-2xl text-[#4267b2] hover:bg-accent hover:text-white"
-              >
-                <ion-icon name="logo-facebook"></ion-icon>
-              </a>
-            </li>
-          </ul>
-        </div>
+            Subscribe
+          </button>
+        </form>
       </div>
     </div>
   </body>

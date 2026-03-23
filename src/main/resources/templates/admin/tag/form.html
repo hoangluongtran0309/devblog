@@ -1,0 +1,161 @@
+<!doctype html>
+<html
+  th:lang="|${#locale.language}-${#locale.country}|"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{admin/layout/main}"
+>
+  <head>
+    <title
+      th:text="${editMode.name() == 'CREATE'} ? 'New Tag - Admin Panel' : 'Edit Tag - Admin Panel'"
+    >
+      Tag Form - Admin Panel
+    </title>
+  </head>
+
+  <body>
+    <th:block layout:fragment="content">
+      <div class="flex items-center gap-3 mb-6">
+        <a
+          th:href="@{/admin/tags}"
+          class="w-9 h-9 flex items-center justify-center rounded-lg text-light-fg-secondary dark:text-dark-fg-secondary hover:bg-light-action-secondary dark:hover:bg-dark-action-secondary hover:text-accent transition-all duration-200"
+        >
+          <ion-icon name="arrow-back-outline" class="text-xl"></ion-icon>
+        </a>
+        <div>
+          <h2
+            class="text-2xl font-bold"
+            th:text="${editMode.name() == 'CREATE'} ? 'New Tag' : 'Edit Tag'"
+          >
+            Tag
+          </h2>
+          <p
+            class="text-sm text-light-fg-secondary dark:text-dark-fg-secondary mt-1 transition-colors duration-300"
+            th:text="${editMode.name() == 'CREATE'} ? 'Fill in the details to create a new tag' : 'Update the tag information'"
+          >
+            Form description
+          </p>
+        </div>
+      </div>
+
+      <div class="mb-6" th:if="${errorMessage}">
+        <th:block
+          th:replace="~{admin/fragments/alerts :: alert('error', ${errorMessage})}"
+        ></th:block>
+      </div>
+
+      <form
+        th:if="${editMode.name() == 'CREATE'}"
+        th:action="@{/admin/tags/new}"
+        th:object="${createTagForm}"
+        method="post"
+      >
+        <div class="max-w-lg">
+          <div
+            class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300 space-y-4"
+          >
+            <h3 class="text-base font-semibold mb-2 flex items-center gap-2">
+              <ion-icon
+                name="pricetag-outline"
+                class="text-accent text-lg"
+              ></ion-icon>
+              Tag Details
+            </h3>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: text-field(
+              'tagName', 'tagName',
+              null, 'Tag Name',
+              'text-outline', 'e.g. Spring Boot',
+              true, 'off', *{tagName}, 'tagName', null
+            )}"
+            ></th:block>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: text-field(
+              'tagSlug', 'tagSlug',
+              null, 'Slug',
+              'link-outline', 'e.g. spring-boot',
+              true, 'off', *{tagSlug}, 'tagSlug', null
+            )}"
+            ></th:block>
+          </div>
+
+          <div class="flex flex-col gap-3 mt-6">
+            <button
+              type="submit"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity duration-200"
+            >
+              <ion-icon name="cloud-upload-outline" class="text-lg"></ion-icon>
+              Create Tag
+            </button>
+            <a
+              th:href="@{/admin/tags}"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary text-light-fg-secondary dark:text-dark-fg-secondary text-sm font-semibold rounded-lg hover:bg-light-action-primary dark:hover:bg-dark-action-primary transition-colors duration-200"
+            >
+              Cancel
+            </a>
+          </div>
+        </div>
+      </form>
+
+      <form
+        th:if="${editMode.name() == 'UPDATE'}"
+        th:action="@{/admin/tags/{id}/update(id=${updateTagForm.id})}"
+        th:object="${updateTagForm}"
+        method="post"
+      >
+        <div class="max-w-lg">
+          <div
+            class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300 space-y-4"
+          >
+            <h3 class="text-base font-semibold mb-2 flex items-center gap-2">
+              <ion-icon
+                name="pricetag-outline"
+                class="text-accent text-lg"
+              ></ion-icon>
+              Tag Details
+            </h3>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: text-field(
+              'tagName', 'tagName',
+              null, 'Tag Name',
+              'text-outline', 'e.g. Spring Boot',
+              true, 'off', *{tagName}, 'tagName', null
+            )}"
+            ></th:block>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: text-field(
+              'tagSlug', 'tagSlug',
+              null, 'Slug',
+              'link-outline', 'e.g. spring-boot',
+              true, 'off', *{tagSlug}, 'tagSlug', null
+            )}"
+            ></th:block>
+          </div>
+
+          <div class="flex flex-col gap-3 mt-6">
+            <button
+              type="submit"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity duration-200"
+            >
+              <ion-icon
+                name="checkmark-circle-outline"
+                class="text-lg"
+              ></ion-icon>
+              Save Changes
+            </button>
+            <a
+              th:href="@{/admin/tags}"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary text-light-fg-secondary dark:text-dark-fg-secondary text-sm font-semibold rounded-lg hover:bg-light-action-primary dark:hover:bg-dark-action-primary transition-colors duration-200"
+            >
+              Cancel
+            </a>
+          </div>
+        </div>
+      </form>
+    </th:block>
+  </body>
+</html>

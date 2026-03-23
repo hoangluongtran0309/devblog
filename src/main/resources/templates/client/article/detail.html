@@ -1,0 +1,57 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{client/layout/main}"
+>
+  <head>
+    <title th:text="|${article.articleTitle.asString()} - DevBlog|">
+      Article - DevBlog
+    </title>
+  </head>
+
+  <body>
+    <div layout:fragment="content">
+      <div
+        th:replace="~{client/fragments/details :: detailHero(
+          '/articles',
+          'Articles',
+          ${article.articleTitle.asString()},
+          ${article.category != null ? article.category.categoryName.asString() : null},
+          ${article.category != null ? '/articles/category/' + article.category.categorySlug.asString() : null},
+          ${article.publishedAt},
+          ${#strings.length(article.articleContent.asString())},
+          ${article.imagePreview.asString()},
+          ${article.articleTitle.asString()}
+        )}"
+      ></div>
+
+      <div class="bg-light-bg-secondary dark:bg-dark-bg-secondary transition-colors duration-300 py-14">
+        <div class="container mx-auto px-4 sm:px-8 lg:px-8 max-w-[1150px] lg:grid lg:grid-cols-[1fr_300px] lg:gap-16">
+          <div
+            th:replace="~{client/fragments/details :: detailContent(
+              ${article.articleSummary.asString()},
+              ${article.articleContent.asString()},
+              ${article.tags},
+              '/articles/tag/',
+              '/articles',
+              'Articles'
+            )}"
+          ></div>
+
+          <aside
+            th:replace="~{client/fragments/details :: detailSidebar(
+              'Article Info',
+              ${article.publishedAt},
+              ${article.category != null ? article.category.categoryName.asString() : null},
+              ${article.category != null ? '/articles/category/' + article.category.categorySlug.asString() : null},
+              ${article.tags},
+              '/articles/tag/'
+            )}"
+          ></aside>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

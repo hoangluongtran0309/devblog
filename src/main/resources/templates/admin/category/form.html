@@ -1,0 +1,244 @@
+<!doctype html>
+<html
+  th:lang="|${#locale.language}-${#locale.country}|"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{admin/layout/main}"
+>
+  <head>
+    <title
+      th:text="${editMode.name() == 'CREATE'} ? 'New Category - Admin Panel' : 'Edit Category - Admin Panel'"
+    >
+      Category Form - Admin Panel
+    </title>
+  </head>
+
+  <body>
+    <th:block layout:fragment="content">
+      <div class="flex items-center gap-3 mb-6">
+        <a
+          th:href="@{/admin/categories}"
+          class="w-9 h-9 flex items-center justify-center rounded-lg text-light-fg-secondary dark:text-dark-fg-secondary hover:bg-light-action-secondary dark:hover:bg-dark-action-secondary hover:text-accent transition-all duration-200"
+        >
+          <ion-icon name="arrow-back-outline" class="text-xl"></ion-icon>
+        </a>
+        <div>
+          <h2
+            class="text-2xl font-bold"
+            th:text="${editMode.name() == 'CREATE'} ? 'New Category' : 'Edit Category'"
+          >
+            Category
+          </h2>
+          <p
+            class="text-sm text-light-fg-secondary dark:text-dark-fg-secondary mt-1 transition-colors duration-300"
+            th:text="${editMode.name() == 'CREATE'} ? 'Fill in the details to create a new category' : 'Update the category information'"
+          >
+            Form description
+          </p>
+        </div>
+      </div>
+
+      <div class="mb-6" th:if="${errorMessage}">
+        <th:block
+          th:replace="~{admin/fragments/alerts :: alert('error', ${errorMessage})}"
+        ></th:block>
+      </div>
+
+      <form
+        th:if="${editMode.name() == 'CREATE'}"
+        th:action="@{/admin/categories/new}"
+        th:object="${createCategoryForm}"
+        method="post"
+      >
+        <div class="max-w-lg">
+          <div
+            class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300 space-y-4"
+          >
+            <h3 class="text-base font-semibold mb-2 flex items-center gap-2">
+              <ion-icon
+                name="folder-outline"
+                class="text-accent text-lg"
+              ></ion-icon>
+              Category Details
+            </h3>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: text-field(
+              'categoryName', 'categoryName',
+              null, 'Category Name',
+              'text-outline', 'e.g. Backend Development',
+              true, 'off', *{categoryName}, 'categoryName', null
+            )}"
+            ></th:block>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: text-field(
+              'categoryIcon', 'categoryIcon',
+              null, 'Icon (Ionicon name)',
+              'color-palette-outline', 'e.g. server-outline',
+              true, 'off', *{categoryIcon}, 'categoryIcon', null
+            )}"
+            ></th:block>
+
+            <div
+              class="flex items-center gap-3 px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary rounded-lg transition-colors duration-300"
+            >
+              <div
+                class="w-8 h-8 rounded-md bg-accent/10 flex items-center justify-center flex-shrink-0"
+              >
+                <ion-icon
+                  id="iconPreview"
+                  name="folder-outline"
+                  class="text-accent text-lg"
+                ></ion-icon>
+              </div>
+              <span
+                class="text-xs text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300"
+              >
+                Icon preview — type an
+                <a
+                  href="https://ionic.io/ionicons"
+                  target="_blank"
+                  class="text-accent hover:underline"
+                  >Ionicon name</a
+                >
+                above
+              </span>
+            </div>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: text-field(
+              'categorySlug', 'categorySlug',
+              null, 'Slug',
+              'link-outline', 'e.g. backend-development',
+              true, 'off', *{categorySlug}, 'categorySlug', null
+            )}"
+            ></th:block>
+          </div>
+
+          <div class="flex flex-col gap-3 mt-6">
+            <button
+              type="submit"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity duration-200"
+            >
+              <ion-icon name="cloud-upload-outline" class="text-lg"></ion-icon>
+              Create Category
+            </button>
+            <a
+              th:href="@{/admin/categories}"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary text-light-fg-secondary dark:text-dark-fg-secondary text-sm font-semibold rounded-lg hover:bg-light-action-primary dark:hover:bg-dark-action-primary transition-colors duration-200"
+            >
+              Cancel
+            </a>
+          </div>
+        </div>
+      </form>
+
+      <form
+        th:if="${editMode.name() == 'UPDATE'}"
+        th:action="@{/admin/categories/{id}/update(id=${updateCategoryForm.id})}"
+        th:object="${updateCategoryForm}"
+        method="post"
+      >
+        <div class="max-w-lg">
+          <div
+            class="bg-light-bg-primary dark:bg-dark-bg-primary rounded-xl shadow-sm border border-light-border dark:border-dark-border p-6 transition-colors duration-300 space-y-4"
+          >
+            <h3 class="text-base font-semibold mb-2 flex items-center gap-2">
+              <ion-icon
+                name="folder-outline"
+                class="text-accent text-lg"
+              ></ion-icon>
+              Category Details
+            </h3>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: text-field(
+              'categoryName', 'categoryName',
+              null, 'Category Name',
+              'text-outline', 'e.g. Backend Development',
+              true, 'off', *{categoryName}, 'categoryName', null
+            )}"
+            ></th:block>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: text-field(
+              'categoryIcon', 'categoryIcon',
+              null, 'Icon (Ionicon name)',
+              'color-palette-outline', 'e.g. server-outline',
+              true, 'off', *{categoryIcon}, 'categoryIcon', null
+            )}"
+            ></th:block>
+
+            <div
+              class="flex items-center gap-3 px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary rounded-lg transition-colors duration-300"
+            >
+              <div
+                class="w-8 h-8 rounded-md bg-accent/10 flex items-center justify-center flex-shrink-0"
+              >
+                <ion-icon
+                  id="iconPreview"
+                  th:name="*{categoryIcon} ?: 'folder-outline'"
+                  class="text-accent text-lg"
+                ></ion-icon>
+              </div>
+              <span
+                class="text-xs text-light-fg-secondary dark:text-dark-fg-secondary transition-colors duration-300"
+              >
+                Icon preview — type an
+                <a
+                  href="https://ionic.io/ionicons"
+                  target="_blank"
+                  class="text-accent hover:underline"
+                  >Ionicon name</a
+                >
+                above
+              </span>
+            </div>
+
+            <th:block
+              th:replace="~{admin/fragments/fields :: text-field(
+              'categorySlug', 'categorySlug',
+              null, 'Slug',
+              'link-outline', 'e.g. backend-development',
+              true, 'off', *{categorySlug}, 'categorySlug', null
+            )}"
+            ></th:block>
+          </div>
+
+          <div class="flex flex-col gap-3 mt-6">
+            <button
+              type="submit"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity duration-200"
+            >
+              <ion-icon
+                name="checkmark-circle-outline"
+                class="text-lg"
+              ></ion-icon>
+              Save Changes
+            </button>
+            <a
+              th:href="@{/admin/categories}"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-light-action-secondary dark:bg-dark-action-secondary text-light-fg-secondary dark:text-dark-fg-secondary text-sm font-semibold rounded-lg hover:bg-light-action-primary dark:hover:bg-dark-action-primary transition-colors duration-200"
+            >
+              Cancel
+            </a>
+          </div>
+        </div>
+      </form>
+    </th:block>
+
+    <th:block layout:fragment="scripts">
+      <script>
+        const iconInput = document.getElementById("categoryIcon");
+        const iconPreview = document.getElementById("iconPreview");
+        if (iconInput && iconPreview) {
+          iconInput.addEventListener("input", function () {
+            const val = this.value.trim();
+            iconPreview.setAttribute("name", val || "folder-outline");
+          });
+        }
+      </script>
+    </th:block>
+  </body>
+</html>

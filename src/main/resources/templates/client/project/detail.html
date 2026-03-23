@@ -1,0 +1,57 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{client/layout/main}"
+>
+  <head>
+    <title th:text="|${project.projectName.asString()} - DevBlog|">
+      Project - DevBlog
+    </title>
+  </head>
+
+  <body>
+    <div layout:fragment="content">
+      <div
+        th:replace="~{client/fragments/details :: detailHero(
+          '/projects',
+          'Projects',
+          ${project.projectName.asString()},
+          ${null},
+          ${null},
+          ${project.publishedAt},
+          ${#strings.length(project.projectContent.asString())},
+          ${project.imagePreview.asString()},
+          ${project.projectName.asString()}
+        )}"
+      ></div>
+
+      <div class="bg-light-bg-secondary dark:bg-dark-bg-secondary transition-colors duration-300 py-14">
+        <div class="container mx-auto px-4 sm:px-8 lg:px-8 max-w-[1150px] lg:grid lg:grid-cols-[1fr_300px] lg:gap-16">
+          <div
+            th:replace="~{client/fragments/details :: detailContent(
+              ${project.projectSummary.asString()},
+              ${project.projectContent.asString()},
+              ${project.tags},
+              '/projects/tag/',
+              '/projects',
+              'Projects'
+            )}"
+          ></div>
+
+          <aside
+            th:replace="~{client/fragments/details :: detailSidebar(
+              'Project Info',
+              ${project.publishedAt},
+              ${null},
+              ${null},
+              ${project.tags},
+              '/projects/tag/'
+            )}"
+          ></aside>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

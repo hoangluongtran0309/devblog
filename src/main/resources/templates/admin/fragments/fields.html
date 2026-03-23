@@ -163,6 +163,49 @@
       </th:block>
     </div>
 
+    <div
+      th:fragment="ck-editor-field(id, name, labelDefault, required, value, errorField)"
+    >
+      <th:block
+        th:with="hasError=${errorField != null and #fields.hasErrors(errorField)}"
+      >
+        <div>
+          <label
+            th:for="${id}"
+            class="block text-sm font-medium mb-2 transition-colors duration-300"
+          >
+            <span th:text="${labelDefault}">Label</span>
+            <span th:if="${required}" class="text-red-500 ml-0.5">*</span>
+          </label>
+
+          <textarea
+            th:id="${id}"
+            th:name="${name}"
+            th:text="${value}"
+            style="display: none"
+          ></textarea>
+
+          <div
+            th:id="${id + 'Editor'}"
+            th:class="${hasError}
+              ? 'border border-red-400 rounded-lg'
+              : 'border border-light-border dark:border-dark-border rounded-lg'"
+          ></div>
+
+          <div th:if="${hasError}" class="flex items-center gap-1.5 mt-1.5">
+            <ion-icon
+              name="information-circle-outline"
+              class="text-sm text-red-500 shrink-0"
+            ></ion-icon>
+            <p
+              th:errors="*{__${errorField}__}"
+              class="text-xs text-red-500"
+            ></p>
+          </div>
+        </div>
+      </th:block>
+    </div>
+
     <th:block th:fragment="field-js">
       <script th:inline="javascript">
         "use strict";
@@ -176,6 +219,186 @@
             .querySelector(".eye-off-icon")
             .classList.toggle("hidden", !isPassword);
         }
+      </script>
+    </th:block>
+
+    <th:block th:fragment="ck-editor-js(fieldId)">
+      <script th:inline="javascript">
+        "use strict";
+        (function () {
+          const textareaId = /*[[${fieldId}]]*/ "";
+          const editorId = textareaId + "Editor";
+
+          const textarea = document.getElementById(textareaId);
+          const mountEl = document.getElementById(editorId);
+
+          if (!textarea || !mountEl) {
+            console.warn(
+              "CKEditor: không tìm thấy #" + textareaId + " hoặc #" + editorId,
+            );
+            return;
+          }
+
+          if (typeof CKEDITOR_VERSION === "undefined") {
+            console.error(
+              "CKEditor: chưa được load. Kiểm tra CDN trong layout.",
+            );
+            return;
+          }
+
+          CKEDITOR.ClassicEditor.create(mountEl, {
+            initialData: textarea.value,
+            removePlugins: [
+              "AIAssistant",
+              "RealTimeCollaborativeComments",
+              "RealTimeCollaborativeTrackChanges",
+              "RealTimeCollaborativeRevisionHistory",
+              "PresenceList",
+              "Comments",
+              "TrackChanges",
+              "TrackChangesData",
+              "RevisionHistory",
+              "CKBox",
+              "CKFinder",
+              "EasyImage",
+              "DocumentOutline",
+              "TableOfContents",
+              "Pagination",
+              "MultiLevelList",
+              "FormatPainter",
+              "Template",
+              "SlashCommand",
+              "PasteFromOfficeEnhanced",
+              "CaseChange",
+              "WProofreader",
+              "MathType",
+              "ImageInsert",
+              "ImageUpload",
+              "Base64UploadAdapter",
+            ],
+            toolbar: {
+              items: [
+                "undo",
+                "redo",
+                "|",
+                "heading",
+                "|",
+                "bold",
+                "italic",
+                "underline",
+                "strikethrough",
+                "|",
+                "fontFamily",
+                "fontSize",
+                "fontColor",
+                "fontBackgroundColor",
+                "|",
+                "alignment",
+                "|",
+                "bulletedList",
+                "numberedList",
+                "outdent",
+                "indent",
+                "|",
+                "link",
+                "blockQuote",
+                "code",
+                "codeBlock",
+                "|",
+                "imageInsertViaUrl",
+                "insertTable",
+                "mediaEmbed",
+                "horizontalLine",
+                "|",
+                "subscript",
+                "superscript",
+                "removeFormat",
+              ],
+              shouldNotGroupWhenFull: false,
+            },
+            heading: {
+              options: [
+                {
+                  model: "paragraph",
+                  title: "Paragraph",
+                  class: "ck-heading_paragraph",
+                },
+                {
+                  model: "heading1",
+                  view: "h1",
+                  title: "Heading 1",
+                  class: "ck-heading_heading1",
+                },
+                {
+                  model: "heading2",
+                  view: "h2",
+                  title: "Heading 2",
+                  class: "ck-heading_heading2",
+                },
+                {
+                  model: "heading3",
+                  view: "h3",
+                  title: "Heading 3",
+                  class: "ck-heading_heading3",
+                },
+                {
+                  model: "heading4",
+                  view: "h4",
+                  title: "Heading 4",
+                  class: "ck-heading_heading4",
+                },
+              ],
+            },
+            image: {
+              toolbar: [
+                "imageTextAlternative",
+                "imageStyle:inline",
+                "imageStyle:block",
+                "imageStyle:side",
+                "linkImage",
+              ],
+            },
+            table: {
+              contentToolbar: [
+                "tableColumn",
+                "tableRow",
+                "mergeTableCells",
+                "tableProperties",
+                "tableCellProperties",
+              ],
+            },
+            codeBlock: {
+              languages: [
+                { language: "plaintext", label: "Plain text" },
+                { language: "javascript", label: "JavaScript" },
+                { language: "typescript", label: "TypeScript" },
+                { language: "java", label: "Java" },
+                { language: "python", label: "Python" },
+                { language: "html", label: "HTML" },
+                { language: "css", label: "CSS" },
+                { language: "sql", label: "SQL" },
+                { language: "bash", label: "Bash" },
+                { language: "json", label: "JSON" },
+              ],
+            },
+            htmlSupport: {
+              allow: [
+                { name: /.*/, attributes: true, classes: true, styles: true },
+              ],
+            },
+          })
+            .then(function (editor) {
+              const form = textarea.closest("form");
+              if (form) {
+                form.addEventListener("submit", function () {
+                  textarea.value = editor.getData();
+                });
+              }
+            })
+            .catch(function (err) {
+              console.error("CKEditor [" + textareaId + "] init error:", err);
+            });
+        })();
       </script>
     </th:block>
   </body>

@@ -33,6 +33,111 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
       rel="stylesheet"
     />
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.css"
+    />
+
+    <style>
+      .ck.ck-editor {
+        width: 100%;
+      }
+
+      .ck.ck-editor__editable_inline {
+        min-height: 400px;
+        cursor: text;
+      }
+
+      .ck.ck-toolbar {
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+      }
+
+      .ck.ck-editor__main > .ck-editor__editable {
+        border-radius: 0 0 0.5rem 0.5rem !important;
+      }
+
+      :root .ck.ck-editor__main > .ck-editor__editable,
+      :root .ck.ck-toolbar {
+        --ck-color-base-background: #ffffff;
+        --ck-color-toolbar-background: #f8f9fa;
+        --ck-color-base-foreground: #f8f9fa;
+        --ck-color-base-border: #e2e8f0;
+        --ck-color-text: #1a202c;
+        --ck-color-button-default-background: transparent;
+        --ck-color-button-default-hover-background: #e9ecef;
+        --ck-color-button-default-active-background: #dee2e6;
+        --ck-color-button-on-background: #dee2e6;
+        --ck-color-button-on-hover-background: #ced4da;
+        --ck-color-focus-border: #6366f1;
+        --ck-color-input-background: #ffffff;
+        --ck-color-input-border: #cbd5e0;
+        --ck-color-input-text: #1a202c;
+        --ck-color-list-background: #ffffff;
+        --ck-color-list-button-hover-background: #f1f5f9;
+        --ck-color-list-button-on-background: #e8eaf6;
+        --ck-color-list-button-on-background-focus: #dde1f7;
+        --ck-color-panel-background: #ffffff;
+        --ck-color-panel-border: #e2e8f0;
+        --ck-color-tooltip-background: #1a202c;
+        --ck-color-tooltip-text: #ffffff;
+        --ck-color-table-focused-cell-background: #f0f4ff;
+        --ck-color-widget-blurred-border: #cbd5e0;
+        --ck-color-widget-hover-border: #6366f1;
+        --ck-color-widget-editable-focus-background: #f8faff;
+      }
+
+      .dark .ck.ck-editor__main > .ck-editor__editable,
+      .dark .ck.ck-toolbar {
+        --ck-color-base-background: #1e2433;
+        --ck-color-toolbar-background: #161c2c;
+        --ck-color-base-foreground: #161c2c;
+        --ck-color-base-border: #2d3748;
+        --ck-color-text: #e2e8f0;
+        --ck-color-button-default-background: transparent;
+        --ck-color-button-default-hover-background: #2d3748;
+        --ck-color-button-default-active-background: #374151;
+        --ck-color-button-on-background: #374151;
+        --ck-color-button-on-hover-background: #4a5568;
+        --ck-color-focus-border: #818cf8;
+        --ck-color-input-background: #1e2433;
+        --ck-color-input-border: #4a5568;
+        --ck-color-input-text: #e2e8f0;
+        --ck-color-list-background: #1e2433;
+        --ck-color-list-button-hover-background: #2d3748;
+        --ck-color-list-button-on-background: #374151;
+        --ck-color-list-button-on-background-focus: #4a5568;
+        --ck-color-panel-background: #1e2433;
+        --ck-color-panel-border: #2d3748;
+        --ck-color-tooltip-background: #e2e8f0;
+        --ck-color-tooltip-text: #1a202c;
+        --ck-color-table-focused-cell-background: #2d3748;
+        --ck-color-widget-blurred-border: #4a5568;
+        --ck-color-widget-hover-border: #818cf8;
+        --ck-color-widget-editable-focus-background: #1e2433;
+      }
+
+      .dark .ck.ck-dropdown__panel,
+      .dark .ck.ck-balloon-panel {
+        background: #1e2433;
+        border-color: #2d3748;
+      }
+
+      .dark .ck.ck-editor__editable > .ck-placeholder::before {
+        color: #4a5568;
+      }
+
+      .dark .ck.ck-editor__editable pre {
+        background: #0f1623;
+        color: #e2e8f0;
+        border-color: #2d3748;
+      }
+
+      .dark .ck.ck-editor__editable .ck-selection__fake-selection-container {
+        background: rgba(99, 102, 241, 0.2);
+      }
+    </style>
   </head>
 
   <body
@@ -49,6 +154,8 @@
     </div>
 
     <script th:src="@{/js/admin.script.js}"></script>
+
+    <th:block layout:fragment="scripts"></th:block>
 
     <script
       type="module"
