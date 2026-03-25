@@ -142,14 +142,12 @@
                 ></th:block>
 
                 <th:block
-                  th:replace="~{admin/fragments/fields :: text-field(
+                  th:replace="~{admin/fragments/fields :: image-picker-field(
                   'imagePreview', 'imagePreview',
-                  null, 'Image Preview URL',
-                  'image-outline',
-                  'https://...',
-                  false, 'off',
+                  'Image Preview',
+                  true,
                   *{imagePreview},
-                  'imagePreview', null
+                  'imagePreview'
                 )}"
                 ></th:block>
               </div>
@@ -371,14 +369,12 @@
                 ></th:block>
 
                 <th:block
-                  th:replace="~{admin/fragments/fields :: text-field(
+                  th:replace="~{admin/fragments/fields :: image-picker-field(
                   'imagePreview', 'imagePreview',
-                  null, 'Image Preview URL',
-                  'image-outline',
-                  'https://...',
-                  false, 'off',
+                  'Image Preview',
+                  true,
                   *{imagePreview},
-                  'imagePreview', null
+                  'imagePreview'
                 )}"
                 ></th:block>
               </div>
@@ -501,8 +497,18 @@
     </th:block>
 
     <th:block layout:fragment="scripts">
+      <th:block th:replace="~{admin/fragments/modals :: modal-js}"></th:block>
+
       <th:block
         th:replace="~{admin/fragments/fields :: ck-editor-js('articleContent')}"
+      ></th:block>
+
+      <th:block
+        th:replace="~{admin/fragments/modals :: modal-media-picker('mediaPickerModal')}"
+      ></th:block>
+
+      <th:block
+        th:replace="~{admin/fragments/fields :: image-picker-js}"
       ></th:block>
 
       <script>

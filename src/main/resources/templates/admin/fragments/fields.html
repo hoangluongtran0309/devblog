@@ -206,6 +206,103 @@
       </th:block>
     </div>
 
+    <div
+      th:fragment="image-picker-field(id, name, labelDefault, required, value, errorField)"
+    >
+      <th:block
+        th:with="hasError=${errorField != null and #fields.hasErrors(errorField)},
+                 hasValue=${value != null and !#strings.isEmpty(value)}"
+      >
+        <div>
+          <label
+            th:for="${id}"
+            class="block text-sm font-medium mb-2 transition-colors duration-300"
+          >
+            <span th:text="${labelDefault}">Image</span>
+            <span th:if="${required}" class="text-red-500 ml-0.5">*</span>
+          </label>
+
+          <input
+            type="hidden"
+            th:id="${id}"
+            th:name="${name}"
+            th:value="${value}"
+          />
+
+          <div
+            th:classappend="${hasError}
+              ? 'border-2 border-red-400 bg-red-50 dark:bg-red-900/10'
+              : 'border-2 border-light-border dark:border-dark-border bg-light-action-secondary dark:bg-dark-action-secondary'"
+            class="relative rounded-xl overflow-hidden transition-colors duration-300"
+          >
+            <div
+              th:id="${id + 'Filled'}"
+              th:class="${hasValue} ? 'block' : 'hidden'"
+            >
+              <img
+                th:id="${id + 'Img'}"
+                th:src="${hasValue} ? ${value} : ''"
+                alt="Selected image"
+                class="w-full h-48 object-cover"
+              />
+
+              <div
+                class="absolute bottom-0 inset-x-0 flex items-center justify-between gap-2 px-3 py-2 bg-black/50 backdrop-blur-sm"
+              >
+                <p
+                  th:id="${id + 'Name'}"
+                  class="text-white text-xs font-medium truncate"
+                  th:text="${hasValue} ? ${#strings.substringAfterLast(value, '/')} : ''"
+                ></p>
+                <button
+                  type="button"
+                  th:attr="onclick='clearPickerField(\'' + ${id} + '\')'"
+                  class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-white/20 hover:bg-red-500 text-white transition-colors duration-200"
+                  title="Remove"
+                  aria-label="Remove selected image"
+                >
+                  <ion-icon name="close-outline" class="text-sm"></ion-icon>
+                </button>
+              </div>
+            </div>
+
+            <div
+              th:id="${id + 'Empty'}"
+              th:classappend="${hasValue} ? ' hidden' : ' flex'"
+              class="flex-col items-center justify-center text-center gap-2 py-10 text-light-fg-secondary dark:text-dark-fg-secondary"
+            >
+              <ion-icon
+                name="image-outline"
+                class="text-3xl text-current"
+              ></ion-icon>
+
+              <p class="text-sm">No image selected</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            th:attr="onclick='openMediaPicker(\'mediaPickerModal\', \'' + ${id} + '\')'"
+            class="mt-2.5 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium border border-light-border dark:border-dark-border bg-light-bg-primary dark:bg-dark-bg-primary text-light-fg-secondary dark:text-dark-fg-secondary hover:border-accent hover:text-accent transition-all duration-200"
+          >
+            <ion-icon name="images-outline" class="text-base"></ion-icon>
+            Choose from Media Library
+          </button>
+
+          <div th:if="${hasError}" class="flex items-center gap-1.5 mt-1.5">
+            <ion-icon
+              name="information-circle-outline"
+              class="text-sm text-red-500 shrink-0"
+            ></ion-icon>
+            <p
+              th:errors="*{__${errorField}__}"
+              class="text-xs text-red-500"
+            ></p>
+          </div>
+        </div>
+      </th:block>
+    </div>
+
     <th:block th:fragment="field-js">
       <script th:inline="javascript">
         "use strict";
@@ -398,6 +495,104 @@
             .catch(function (err) {
               console.error("CKEditor [" + textareaId + "] init error:", err);
             });
+        })();
+      </script>
+    </th:block>
+
+    <th:block th:fragment="image-picker-js">
+      <script>
+        "use strict";
+
+        (function () {
+          var _activeInputId = null;
+          var _activeModalId = null;
+          var _selectedUrl = "";
+
+          window.openMediaPicker = function (modalId, targetInputId) {
+            _activeInputId = targetInputId;
+            _activeModalId = modalId;
+
+            var input = document.getElementById(targetInputId);
+            _selectedUrl = input ? input.value : "";
+
+            _showModal(modalId);
+            loadPickerPage(0);
+          };
+
+          window.loadPickerPage = function (page) {
+            var grid = document.getElementById("mediaPickerGrid");
+            var spinner = document.getElementById("mediaPickerSpinner");
+            if (!grid) return;
+
+            if (spinner) spinner.classList.remove("hidden");
+
+            fetch("/admin/media/picker?page=" + page + "&size=24")
+              .then(function (res) {
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.text();
+              })
+              .then(function (html) {
+                grid.innerHTML = html;
+                _highlightSelected();
+              })
+              .catch(function (err) {
+                grid.innerHTML =
+                  '<p class="col-span-full text-center text-sm text-red-500 py-10">' +
+                  "Failed to load media. Please try again." +
+                  "</p>";
+                console.error("[MediaPicker] load error:", err);
+              })
+              .finally(function () {
+                if (spinner) spinner.classList.add("hidden");
+              });
+          };
+
+          window.selectPickerImage = function (buttonEl) {
+            var url = buttonEl.dataset.url;
+            var name = buttonEl.dataset.name;
+            if (!url || !_activeInputId) return;
+
+            var input = document.getElementById(_activeInputId);
+            if (input) input.value = url;
+
+            _updatePreview(_activeInputId, url, name);
+
+            if (_activeModalId) _hideModal(_activeModalId);
+          };
+
+          window.clearPickerField = function (inputId) {
+            var input = document.getElementById(inputId);
+            if (input) input.value = "";
+            _updatePreview(inputId, "", "");
+          };
+
+          function _updatePreview(inputId, url, name) {
+            var filled = document.getElementById(inputId + "Filled");
+            var empty = document.getElementById(inputId + "Empty");
+            var img = document.getElementById(inputId + "Img");
+            var nameEl = document.getElementById(inputId + "Name");
+            var hasUrl = Boolean(url);
+
+            if (filled) filled.classList.toggle("hidden", !hasUrl);
+            if (empty) empty.classList.toggle("hidden", hasUrl);
+            if (img) img.src = hasUrl ? url : "";
+            if (nameEl)
+              nameEl.textContent = hasUrl ? name || url.split("/").pop() : "";
+          }
+
+          function _highlightSelected() {
+            if (!_selectedUrl) return;
+            var grid = document.getElementById("mediaPickerGrid");
+            if (!grid) return;
+
+            grid.querySelectorAll(".picker-item").forEach(function (btn) {
+              var selected = btn.dataset.url === _selectedUrl;
+              btn.classList.toggle("border-accent", selected);
+              btn.classList.toggle("border-transparent", !selected);
+              var check = btn.querySelector(".picker-check");
+              if (check) check.style.opacity = selected ? "1" : "0";
+            });
+          }
         })();
       </script>
     </th:block>

@@ -180,6 +180,9 @@ jobs:
             -e ADMIN_EMAIL=admin@test.com \
             -e ADMIN_PASSWORD=hashPassword \
             -e REMEMBER_ME_KEY=test-secret-key \
+            -e CLOUDINARY_CLOUD_NAME=test-cloudinary-cloud-name \
+            -e CLOUDINARY_API_KEY=test-cloudinary-api-key \
+            -e CLOUDINARY_API_SECRET=test-cloudinary-api-secret \
             -p 10000:10000 \
             test-image:pr-${{ github.event.pull_request.number }}
 
